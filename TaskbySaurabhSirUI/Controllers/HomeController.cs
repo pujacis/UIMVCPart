@@ -77,27 +77,176 @@ namespace TaskbySaurabhSirUI.Controllers
         [HttpGet]
         public IActionResult GetPerson()
         {
-            try
+            using (var client = new HttpClient())
             {
-                List<Person> personlist = new List<Person>();
-                client.BaseAddress = new Uri("https://localhost:7063/api/Person");
-                var response = client.GetAsync("Person");
-                response.Wait();
-                var text = response.Result;
-                //if (text.IsSuccessStatusCode)
-                //{
-                //    var display = text.Content.ReadAsAsync<List<Person>>();
-                //    display.Wait();
-                //    personlist = display.Result;
-                //}
-                return View(personlist);
-            }
-            catch (Exception ex)
-            {
+                try
+                {
+                    List<Person> personlist = new List<Person>();
+                    client.BaseAddress = new Uri(baseapi + "Person");
+                    var response = client.GetAsync("Person");
+                    response.Wait();
+                    var text = response.Result;
+                    if (text.IsSuccessStatusCode)
+                    {
+                        var display = text.Content.ReadAsAsync<List<Person>>();
+                        display.Wait();
+                        personlist = display.Result;
+                    }
+                    return View(personlist);
+                }
+                catch (Exception ex)
+                {
 
-                return View();
+                    return View();
+                }
             }
-            
         }
+        public IActionResult Editperson(int id)
+        {
+            using (var client = new HttpClient())
+            {
+                try
+                {
+               // https://localhost:7063/api/Person/{personId}
+
+                    Person person = null;
+                    client.BaseAddress = new Uri(baseapi+ "Person");
+                    var response = client.GetAsync("Person/personId?id=" + id);
+                    response.Wait();
+                    var text = response.Result;
+                    if (text.IsSuccessStatusCode)
+                    {
+                        var display = text.Content.ReadAsAsync<Person>();
+
+                        display.Wait();
+                        person = display.Result;
+                    }
+                    return View(person);
+                }
+                catch (Exception ex)
+                {
+
+                    throw;
+                }
+            }
+
+        }
+        [HttpPost]
+        public IActionResult Editperson(Person Person)
+        {
+            using (var client = new HttpClient())
+            {
+                try
+                {
+
+
+                    //TblEmployee emp = null;
+                    client.BaseAddress = new Uri(baseapi + "Person");
+                    var response = client.PutAsJsonAsync<Person>("Person", Person);
+                    response.Wait();
+                    var text = response.Result;
+                    if (text.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("GetPerson","Home");
+                    }
+                    return View("Editperson");
+                }
+                catch (Exception ex)
+                {
+
+                    throw;
+                }
+            }
+
+        }
+
+
+        public IActionResult Deleteperson(int id)
+        {
+            using (var client = new HttpClient())
+            {
+                try
+                {
+
+                    Person person = null;
+                    client.BaseAddress = new Uri(baseapi + "Person");
+                    var response = client.GetAsync("Person/personId?personid=" + id.ToString());
+                    response.Wait();
+                    var text = response.Result;
+                    if (text.IsSuccessStatusCode)
+                    {
+                        var display = text.Content.ReadAsAsync<Person>();
+
+                        display.Wait();
+                        person = display.Result;
+                    }
+                    return View(person);
+                }
+                catch (Exception ex)
+                {
+
+                    throw;
+                }
+            }
+
+        }
+        [HttpPost, ActionName("Deleteperson")]
+        public ActionResult Deleteconfirmed(int id)
+        {
+            using (var client = new HttpClient())
+            {
+                try
+                {
+
+                    //TblEmployee emp = null;
+                    client.BaseAddress = new Uri(baseapi + "Person");
+                    var response = client.DeleteAsync("Person/?personid=" + id.ToString());
+                                            //https://localhost:7063/api/Person?personid=3
+                    response.Wait();
+                    var text = response.Result;
+                    if (text.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("GetPerson");
+                    }
+                    return RedirectToAction("Deleteperson");
+                }
+                catch (Exception ex)
+                {
+
+                    throw;
+                }
+            }
+        }
+        public IActionResult Details(int id)
+        {
+            using (var client = new HttpClient())
+            {
+                try
+                {
+
+                    Person person = null;
+                    client.BaseAddress = new Uri(baseapi + "Person");
+                    var response = client.GetAsync("Person/?personid=" + id.ToString());
+                    response.Wait();
+                    var text = response.Result;
+                    if (text.IsSuccessStatusCode)
+                    {
+                        var display = text.Content.ReadAsAsync<Person>();
+
+                        display.Wait();
+                        person = display.Result;
+                    }
+                    return View();
+                }
+                catch (Exception ex)
+                {
+
+                    throw;
+                }
+            }
+
+        }
+
+
     }
 }

@@ -73,15 +73,16 @@
                 @Html.DisplayFor(modelItem => item.Address)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FileName)
+               @* @Html.DisplayFor(modelItem => item.FileName)*@
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.base64data)
+                @*@Html.DisplayFor(modelItem => item.base64data)*@
+                    <img src="@String.Format("data:image/jpg;base64,{0}",item.base64data)" />
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                    @Html.ActionLink("Edit", "Editperson", new {  id=item.PersonId  }) |
+                    @Html.ActionLink("Details", "Details", new {  id=item.PersonId  }) |
+                    @Html.ActionLink("Delete", "Deleteperson", new {  id=item.PersonId  })
             </td>
         </tr>
 }
