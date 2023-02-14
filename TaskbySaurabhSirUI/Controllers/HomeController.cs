@@ -101,17 +101,19 @@ namespace TaskbySaurabhSirUI.Controllers
                 }
             }
         }
+      
+        [HttpGet]
         public IActionResult Editperson(int id)
         {
             using (var client = new HttpClient())
             {
                 try
-                {
-               // https://localhost:7063/api/Person/{personId}
+                {            
 
                     Person person = null;
                     client.BaseAddress = new Uri(baseapi+ "Person");
-                    var response = client.GetAsync("Person/personId?id=" + id);
+                    var response = client.GetAsync("Person/productId?personid=" + id);             
+                  
                     response.Wait();
                     var text = response.Result;
                     if (text.IsSuccessStatusCode)
@@ -250,3 +252,5 @@ namespace TaskbySaurabhSirUI.Controllers
 
     }
 }
+//  https://localhost:7063/api/Person/9?personid=9
+// https://localhost:7063/api/Person/{personId}
