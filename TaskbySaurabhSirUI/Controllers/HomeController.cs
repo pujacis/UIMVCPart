@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Text;
@@ -13,7 +14,7 @@ namespace TaskbySaurabhSirUI.Controllers
         private string baseapi = "https://localhost:7063/api/";
         private readonly ILogger<HomeController> _logger;
         private static readonly HttpClient client = new HttpClient();
-
+        private readonly data data;
 
         public HomeController(ILogger<HomeController> logger)
         {
@@ -66,9 +67,21 @@ namespace TaskbySaurabhSirUI.Controllers
 
                 }
             }
+
             //var accesstoken = HttpContext.Session.GetString("accesstoken");
             client.BaseAddress = new Uri(baseapi + "Person");
             var response = client.PostAsJsonAsync<Person>("Person", pr);
+            List<SelectListItem> cmlist = new List<SelectListItem>();
+            var cList = data.RepoWithCountries.ToList();
+            foreach (var item in cList)
+            {
+                SelectListItem cm = new SelectListItem();
+                cm.Value = Convert.ToString(item.CountryId);
+                cm.Text = item.CountryName;
+                //  cm.Selected = Convert.ToInt32(item.CountryId)== 1 ? true : false;
+                cmlist.Add(cm);
+            }
+            ViewBag.Con = cmlist;
             response.Wait();
             var text = response.Result;
             return RedirectToAction("GetPerson");
@@ -92,6 +105,7 @@ namespace TaskbySaurabhSirUI.Controllers
                         display.Wait();
                         personlist = display.Result;
                     }
+                  
                     return View(personlist);
                 }
                 catch (Exception ex)

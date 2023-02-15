@@ -1,5 +1,6 @@
 ﻿@model TaskbySaurabhSirUI.Models.Person
 
+
 @{
     ViewData["Title"] = "CreatePerson";
 }
@@ -32,11 +33,19 @@
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-horizontal">
+                <div class="col-md-5" style="margin-top:20px">
+
+                    @Html.DropDownList("cmlist", (IEnumerable<SelectListItem>)ViewBag.Con, new { id = "CountryId", @class = "form-control" })
+                </div>
+
+            </div>
+          @*  <div class="form-group">
                 <label asp-for="CountryId" class="control-label"></label>
                 <input asp-for="CountryId" class="form-control" />
                 <span asp-validation-for="CountryId" class="text-danger"></span>
-            </div>
+            </div>*@
             <div class="form-group">
                 <label asp-for="StateId" class="control-label"></label>
                 <input asp-for="StateId" class="form-control" />

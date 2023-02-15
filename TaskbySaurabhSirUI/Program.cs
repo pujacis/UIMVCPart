@@ -1,4 +1,11 @@
+using Microsoft.EntityFrameworkCore;
+using TaskbySaurabhSirUI;
+
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("conn"); ;
+
+builder.Services.AddDbContext<data>(options =>
+    options.UseSqlServer(connectionString));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
