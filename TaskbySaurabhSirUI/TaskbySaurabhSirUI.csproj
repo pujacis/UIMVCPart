@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Models\data.cs" />
+    <Content Include="Models\DataContext.cs" />
   </ItemGroup>
 
   <ItemGroup>

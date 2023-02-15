@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TaskbySaurabhSirUI;
 
@@ -10,10 +11,12 @@ using TaskbySaurabhSirUI;
 
 namespace TaskbySaurabhSirUI.Migrations
 {
-    [DbContext(typeof(data))]
-    partial class dataModelSnapshot : ModelSnapshot
+    [DbContext(typeof(DataContext))]
+    [Migration("20230215120803_model")]
+    partial class model
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

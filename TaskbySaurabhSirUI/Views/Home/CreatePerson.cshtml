@@ -9,6 +9,7 @@
 
 <h4>Person</h4>
 <hr />
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="CreatePerson" enctype="multipart/form-data">
@@ -34,26 +35,30 @@
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
-            <div class="form-horizontal">
-                <div class="col-md-5" style="margin-top:20px">
+             <div class="form-group">
+                <label asp-for="CountryId" class="control-label"></label>
 
-                    @Html.DropDownList("cmlist", (IEnumerable<SelectListItem>)ViewBag.Con, new { id = "CountryId", @class = "form-control" })
-                </div>
+                @Html.DropDownList("CountryId" , (IEnumerable<SelectListItem>)ViewBag.Con, new { id = "CountryId", @class = "form-control" })
+                
 
             </div>
-          @*  <div class="form-group">
+           @*<div class="form-group">
                 <label asp-for="CountryId" class="control-label"></label>
                 <input asp-for="CountryId" class="form-control" />
                 <span asp-validation-for="CountryId" class="text-danger"></span>
             </div>*@
             <div class="form-group">
                 <label asp-for="StateId" class="control-label"></label>
-                <input asp-for="StateId" class="form-control" />
+                @*<input asp-for="StateId" class="form-control" />*@
+                <select id="stateId" class="form-control" name="StateId">
+                </select>
                 <span asp-validation-for="StateId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CityId" class="control-label"></label>
-                <input asp-for="CityId" class="form-control" />
+              @*  <input asp-for="CityId" class="form-control" />*@
+                <select id="city-dd" class="form-control" name="CityId">
+                </select>
                 <span asp-validation-for="CityId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -81,4 +86,66 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+
+ <script src="~/lib/jquery/dist/jquery.js"></script>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+ <script type="text/javascript">
+  $(document).ready(function () {
+         
+      });
+
+        $('#CountryId').on('change', function () {
+           
+                 GetStateByCountry();
+               });
+      function GetStateByCountry(){
+           var countryId = $("#CountryId").val();
+                $("#stateId").html('');
+                $.ajax({
+                    url: "/Home/GetStateById",
+                    type: "Post",
+                    data: {"CountryId": countryId  },
+                    dataType: 'json',
+                    success: function (result) {
+                        console.log(result);
+                        $('#stateId').html('<option value="">Select State</option>');
+                        $.each(result, function (key, value) {
+                           
+                            $("#stateId").append('<option value="' + value
+                                .stateId + '">' + value.stateName + '</option>');
+
+                        });
+                        //$('#city-dd').html('<option value="">Select City</option>');
+                    }
+                });
+
+                  $('#stateId').on('change', function () {
+                var StateId = $('#stateId').val();
+
+         
+                $("#city-dd").html('');
+                $.ajax({
+                    url:  "/Home/GetCity",
+                    type: "POST",
+                    data: { "stateid": StateId},
+
+                    dataType: 'json',
+                    success: function (res) {
+                        console.log(res);
+                        var data = res;
+                        $('#city-dd').html('<option value="">Select City</option>');
+                        $.each(res, function (key, value) {
+                            $("#city-dd").append('<option value="' + value.cityId + '">' + value.cityName + '</option>');
+                        });
+                    }
+                });
+            });
+        };
+
+ 
+ </script>
+     
+ 
+
 }

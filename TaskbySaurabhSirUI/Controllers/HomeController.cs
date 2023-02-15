@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Text;
@@ -12,15 +13,17 @@ namespace TaskbySaurabhSirUI.Controllers
     public class HomeController : Controller
     {
         private string baseapi = "https://localhost:7063/api/";
-        private readonly ILogger<HomeController> _logger;
         private static readonly HttpClient client = new HttpClient();
-        private readonly data _data;
+        private readonly ILogger<HomeController> _logger;       
+        private readonly DataContext _data;
 
-        public HomeController(ILogger<HomeController> logger, data data)
+        public HomeController(ILogger<HomeController> logger, DataContext data)
         {
             _logger = logger;
             _data = data;
         }
+
+       
 
         public IActionResult Index()
         {
@@ -45,12 +48,55 @@ namespace TaskbySaurabhSirUI.Controllers
             {
                 SelectListItem cm = new SelectListItem();
                 cm.Value = Convert.ToString(item.CountryId);
-                cm.Text = item.CountryName;               
+                cm.Text = item.CountryName;
                 cmlist.Add(cm);
             }
             ViewBag.Con = cmlist;
             return View();
         }
+        public JsonResult GetStateById(int CountryId)
+        {
+            List<RepoWithState> states = new List<RepoWithState>();
+            var statedata = _data.RepoWithStates.Where(x => x.CountryId == CountryId).ToList();            
+            if (statedata != null)
+            {
+                foreach (var state in statedata)
+                {
+                    RepoWithState stat = new RepoWithState();
+                    stat.StateName = state.StateName;
+                    stat.StateId = state.StateId;
+
+                    stat.CountryId = Convert.ToInt32(state.CountryId);
+                    states.Add(stat);
+
+                }
+
+            }
+            return Json(states);
+
+
+        }
+        public IActionResult GetCity(int stateid)
+        {
+            List<RepoWithCity> city = new List<RepoWithCity>();
+           
+            var CityList = _data.RepoWithCities.Where(x => x.StateId == stateid).ToList();
+            if (CityList != null)
+            {
+                foreach (var cityda in CityList)
+                {
+                    RepoWithCity citydat = new RepoWithCity();
+                    citydat.CityName = cityda.CityName;
+                    citydat.CityId = cityda.CityId;
+                    citydat.StateId = cityda.StateId;
+                    city.Add(citydat);
+                }
+
+
+            }
+            return Json(city);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreatePerson(Person pr)
         {
