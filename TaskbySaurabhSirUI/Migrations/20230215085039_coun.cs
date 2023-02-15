@@ -5,7 +5,7 @@
 namespace TaskbySaurabhSirUI.Migrations
 {
     /// <inheritdoc />
-    public partial class model : Migration
+    public partial class coun : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

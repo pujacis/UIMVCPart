@@ -10,8 +10,8 @@ namespace TaskbySaurabhSirUI
         {
         }
 
-        public virtual DbSet<City> RepoWithCities { get; set; }
-        public virtual DbSet<Country> RepoWithCountries { get; set; }
-        public virtual DbSet<State> RepoWithStates { get; set; }
+        public virtual DbSet<RepoWithCity> RepoWithCities { get; set; }
+        public virtual DbSet<RepoWithCountry> RepoWithCountries { get; set; }
+        public virtual DbSet<RepoWithState> RepoWithStates { get; set; }
     }
 }

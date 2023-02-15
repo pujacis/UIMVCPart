@@ -14,11 +14,12 @@ namespace TaskbySaurabhSirUI.Controllers
         private string baseapi = "https://localhost:7063/api/";
         private readonly ILogger<HomeController> _logger;
         private static readonly HttpClient client = new HttpClient();
-        private readonly data data;
+        private readonly data _data;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, data data)
         {
             _logger = logger;
+            _data = data;
         }
 
         public IActionResult Index()
@@ -38,6 +39,16 @@ namespace TaskbySaurabhSirUI.Controllers
         }
         public IActionResult CreatePerson()
         {
+            List<SelectListItem> cmlist = new List<SelectListItem>();
+            var cList = _data.RepoWithCountries.ToList();
+            foreach (var item in cList)
+            {
+                SelectListItem cm = new SelectListItem();
+                cm.Value = Convert.ToString(item.CountryId);
+                cm.Text = item.CountryName;               
+                cmlist.Add(cm);
+            }
+            ViewBag.Con = cmlist;
             return View();
         }
         [HttpPost]
@@ -71,17 +82,7 @@ namespace TaskbySaurabhSirUI.Controllers
             //var accesstoken = HttpContext.Session.GetString("accesstoken");
             client.BaseAddress = new Uri(baseapi + "Person");
             var response = client.PostAsJsonAsync<Person>("Person", pr);
-            List<SelectListItem> cmlist = new List<SelectListItem>();
-            var cList = data.RepoWithCountries.ToList();
-            foreach (var item in cList)
-            {
-                SelectListItem cm = new SelectListItem();
-                cm.Value = Convert.ToString(item.CountryId);
-                cm.Text = item.CountryName;
-                //  cm.Selected = Convert.ToInt32(item.CountryId)== 1 ? true : false;
-                cmlist.Add(cm);
-            }
-            ViewBag.Con = cmlist;
+           
             response.Wait();
             var text = response.Result;
             return RedirectToAction("GetPerson");

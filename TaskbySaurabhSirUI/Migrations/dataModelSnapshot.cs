@@ -22,7 +22,7 @@ namespace TaskbySaurabhSirUI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("TaskbySaurabhSirUI.Models.City", b =>
+            modelBuilder.Entity("TaskbySaurabhSirUI.Models.RepoWithCity", b =>
                 {
                     b.Property<int>("CityId")
                         .ValueGeneratedOnAdd()
@@ -41,7 +41,7 @@ namespace TaskbySaurabhSirUI.Migrations
                     b.ToTable("RepoWithCities");
                 });
 
-            modelBuilder.Entity("TaskbySaurabhSirUI.Models.Country", b =>
+            modelBuilder.Entity("TaskbySaurabhSirUI.Models.RepoWithCountry", b =>
                 {
                     b.Property<int>("CountryId")
                         .ValueGeneratedOnAdd()
@@ -57,7 +57,7 @@ namespace TaskbySaurabhSirUI.Migrations
                     b.ToTable("RepoWithCountries");
                 });
 
-            modelBuilder.Entity("TaskbySaurabhSirUI.Models.State", b =>
+            modelBuilder.Entity("TaskbySaurabhSirUI.Models.RepoWithState", b =>
                 {
                     b.Property<int>("StateId")
                         .ValueGeneratedOnAdd()
