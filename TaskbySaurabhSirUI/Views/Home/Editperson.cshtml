@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Editperson">
+        <form asp-action="Editperson" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="PersonId" class="control-label"></label>
@@ -57,8 +57,7 @@
                 <input asp-for="FileName" class="form-control" />
                 <span asp-validation-for="FileName" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="base64data" class="control-label"></label>
+          
                 <div class="form-group">
                     <label asp-for="base64data" class="control-label"></label>
                     <input asp-for="base64data" type="file" class="form-control" />
@@ -66,8 +65,8 @@
                 </div>
                @* <input asp-for="base64data" class="form-control" />*@
                @* <img src="@String.Format("data:image/jpg;base64,{0}",Model.base64data)" />*@
-                <span asp-validation-for="base64data" class="text-danger"></span>
-            </div>
+               
+       
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Net.Http.Headers;
 using System.Text;
 using TaskbySaurabhSirUI.Models;
 
@@ -105,7 +106,8 @@ namespace TaskbySaurabhSirUI.Controllers
             
 
 
-            foreach (var Image in files)
+            foreach (var Image 
+                in files)
             {
                 if (Image != null && Image.Length > 0)
                 {
@@ -141,9 +143,21 @@ namespace TaskbySaurabhSirUI.Controllers
             {
                 try
                 {
-                    List<Person> personlist = new List<Person>();
+
+                    var token = HttpContext.Session.GetString("accesstoken");
                     client.BaseAddress = new Uri(baseapi + "Person");
+                    var request = new HttpRequestMessage(HttpMethod.Post, client.BaseAddress);
+                    request.Headers.Accept.Clear();
+                    request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                    request.Content = new StringContent("{...}", Encoding.UTF8, "application/json");
                     var response = client.GetAsync("Person");
+                    //  var response = await _client.SendAsync(request, CancellationToken.None);
+
+
+                    List<Person> personlist = new List<Person>();
+                   // client.BaseAddress = new Uri(baseapi + "Person");
+                   // var response = client.GetAsync("Person");
                     response.Wait();
                     var text = response.Result;
                     if (text.IsSuccessStatusCode)
@@ -168,8 +182,31 @@ namespace TaskbySaurabhSirUI.Controllers
         {
             using (var client = new HttpClient())
             {
+                var files = HttpContext.Request.Form.Files;
                 try
-                {            
+                {
+                   
+                    foreach (var Image
+                        in files)
+                    {
+                        if (Image != null && Image.Length > 0)
+                        {
+                            byte[] bytes;
+                            using (var stream = new MemoryStream())
+                            {
+                                Image.CopyTo(stream);
+                                bytes = stream.ToArray();
+                            }
+
+
+                            String base64file = Convert.ToBase64String(bytes);
+                            pr.FileName = files[0].FileName;
+                            pr.base64data = base64file;
+
+
+                        }
+                    }
+
 
                     Person person = null;
                     client.BaseAddress = new Uri(baseapi+ "Person");
@@ -212,7 +249,7 @@ namespace TaskbySaurabhSirUI.Controllers
                     {
                         return RedirectToAction("GetPerson","Home");
                     }
-                    return View("Editperson");
+                    return View("GetPerson");
                 }
                 catch (Exception ex)
                 {
