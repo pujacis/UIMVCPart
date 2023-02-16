@@ -12,11 +12,11 @@
     <div class="col-md-4">
         <form asp-action="Editperson" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+           @* <div class="form-group">
                 <label asp-for="PersonId" class="control-label"></label>
                 <input asp-for="PersonId" class="form-control" />
                 <span asp-validation-for="PersonId" class="text-danger"></span>
-            </div>
+            </div>*@
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label"></label>
                 <input asp-for="FirstName" class="form-control" />
@@ -34,19 +34,31 @@
             </div>
             <div class="form-group">
                 <label asp-for="CountryId" class="control-label"></label>
-                <input asp-for="CountryId" class="form-control" />
-                <span asp-validation-for="CountryId" class="text-danger"></span>
+
+                @Html.DropDownList("CountryId" , (IEnumerable<SelectListItem>)ViewBag.Con, new { id = "CountryId", @class = "form-control" })
+
+
             </div>
+            @*<div class="form-group">
+            <label asp-for="CountryId" class="control-label"></label>
+            <input asp-for="CountryId" class="form-control" />
+            <span asp-validation-for="CountryId" class="text-danger"></span>
+            </div>*@
             <div class="form-group">
                 <label asp-for="StateId" class="control-label"></label>
-                <input asp-for="StateId" class="form-control" />
+                @*<input asp-for="StateId" class="form-control" />*@
+                <select id="stateId" class="form-control" name="StateId">
+                </select>
                 <span asp-validation-for="StateId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CityId" class="control-label"></label>
-                <input asp-for="CityId" class="form-control" />
+                @*  <input asp-for="CityId" class="form-control" />*@
+                <select id="city-dd" class="form-control" name="CityId">
+                </select>
                 <span asp-validation-for="CityId" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Address" class="control-label"></label>
                 <input asp-for="Address" class="form-control" />
@@ -65,8 +77,9 @@
                 </div>
                @* <input asp-for="base64data" class="form-control" />*@
                @* <img src="@String.Format("data:image/jpg;base64,{0}",Model.base64data)" />*@
-               
-       
+            <div class="form-group">
+                <img width="300" height="200" src="@String.Format("data:image/jpg;base64,{0}",Model.base64data)" />
+            </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
@@ -80,4 +93,61 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+        });
+
+        $('#CountryId').on('change', function () {
+
+            GetStateByCountry();
+        });
+        function GetStateByCountry() {
+            var countryId = $("#CountryId").val();
+            $("#stateId").html('');
+            $.ajax({
+                url: "/Home/GetStateById",
+                type: "Post",
+                data: { "CountryId": countryId },
+                dataType: 'json',
+                success: function (result) {
+                    console.log(result);
+                    $('#stateId').html('<option value="">Select State</option>');
+                    $.each(result, function (key, value) {
+
+                        $("#stateId").append('<option value="' + value
+                            .stateId + '">' + value.stateName + '</option>');
+
+                    });
+                    //$('#city-dd').html('<option value="">Select City</option>');
+                }
+            });
+
+            $('#stateId').on('change', function () {
+                var StateId = $('#stateId').val();
+
+
+                $("#city-dd").html('');
+                $.ajax({
+                    url: "/Home/GetCity",
+                    type: "POST",
+                    data: { "stateid": StateId },
+
+                    dataType: 'json',
+                    success: function (res) {
+                        console.log(res);
+                        var data = res;
+                        $('#city-dd').html('<option value="">Select City</option>');
+                        $.each(res, function (key, value) {
+                            $("#city-dd").append('<option value="' + value.cityId + '">' + value.cityName + '</option>');
+                        });
+                    }
+                });
+            });
+        };
+
+
+    </script>
 }

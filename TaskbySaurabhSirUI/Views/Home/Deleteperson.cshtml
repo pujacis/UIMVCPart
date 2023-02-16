@@ -11,12 +11,12 @@
     <h4>Person</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+       @* <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.PersonId)
-        </dt>
-        <dd class = "col-sm-10">
+        </dt>*@
+     @*   <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.PersonId)
-        </dd>
+        </dd>*@
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.FirstName)
         </dt>
@@ -69,7 +69,8 @@
             @Html.DisplayNameFor(model => model.base64data)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.base64data)
+            @*@Html.DisplayFor(model => model.base64data)*@
+            <img width="300" height="200" src="@String.Format("data:image/jpg;base64,{0}",Model.base64data)" />
         </dd>
     </dl>
     
