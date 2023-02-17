@@ -69,7 +69,7 @@ namespace TaskbySaurabhSirUI.Controllers
         }
         public ActionResult logout()
         {
-            HttpContext.Session.SetString("accesstoken", "null");
+            HttpContext.Session.SetString("accesstoken", "");
             return RedirectToAction("Index");
         }
 

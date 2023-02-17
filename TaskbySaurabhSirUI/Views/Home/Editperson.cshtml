@@ -1,4 +1,4 @@
-﻿@model TaskbySaurabhSirUI.Models.Person
+﻿@model TaskbySaurabhSirUI.Models.GetPerson
 
 @{
     ViewData["Title"] = "Editperson";
@@ -12,6 +12,7 @@
     <div class="col-md-4">
         <form asp-action="Editperson" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @Html.HiddenFor(model => model.PersonId)
            @* <div class="form-group">
                 <label asp-for="PersonId" class="control-label"></label>
                 <input asp-for="PersonId" class="form-control" />
@@ -35,7 +36,7 @@
             <div class="form-group">
                 <label asp-for="CountryId" class="control-label"></label>
 
-                @Html.DropDownList("CountryId" , (IEnumerable<SelectListItem>)ViewBag.Con, new { id = "CountryId", @class = "form-control" })
+                @Html.DropDownListFor(x=>x.CountryId , (IEnumerable<SelectListItem>)ViewBag.Con, new { id = "CountryId", @class = "form-control" })
 
 
             </div>

@@ -36,6 +36,6 @@ namespace TaskbySaurabhSirUI.Models
         // public string UploadFile { get; set; }
         [Required(ErrorMessage = "User Image is required")]
         public string? base64data { get; set; }
-       // public string contentType { get; set; }
+        // public string contentType { get; set; }     
     }
 }

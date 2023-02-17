@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.DotNet.MSIdentity.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -15,12 +16,12 @@ using TaskbySaurabhSirUI.Models;
 
 namespace TaskbySaurabhSirUI.Controllers
 {
-    
+
     public class HomeController : Controller
     {
         private string baseapi = "https://localhost:7063/api/";
-       // private static readonly HttpClient client = new HttpClient();
-        private readonly ILogger<HomeController> _logger;       
+        // private static readonly HttpClient client = new HttpClient();
+        private readonly ILogger<HomeController> _logger;
         private readonly DataContext _data;
 
         public HomeController(ILogger<HomeController> logger, DataContext data)
@@ -29,7 +30,7 @@ namespace TaskbySaurabhSirUI.Controllers
             _data = data;
         }
 
-       
+
 
         public IActionResult Index()
         {
@@ -50,39 +51,49 @@ namespace TaskbySaurabhSirUI.Controllers
         {
             HttpClient client = new HttpClient();
 
-            // List<SelectListItem> cmlist = new List<SelectListItem>();
-            //var cList = _data.RepoWithCountries.ToList();
+            List<SelectListItem> cmlist = new List<SelectListItem>();
             client.BaseAddress = new Uri(baseapi + "CountryStoreproce");
             var response = client.GetAsync("CountryStoreproce");
-            //var jsons= JsonSerializer.Serialize(response);
-            //var abc = JsonConvert.DeserializeObject<CountryVM>(response.Result.ToString());
             response.Wait();
             var text = response.Result;
+            var display = text.Content.ReadAsStringAsync().Result;
+            List<Countryddl> cddl = JsonConvert.DeserializeObject<List<Countryddl>>(display);
+            cmlist.Add(new SelectListItem { Text = "-Select-Country-", Value = "" });
 
-            //foreach (var item in cList)
-            //{
-            //    SelectListItem cm = new SelectListItem();
-            //    cm.Value = Convert.ToString(item.CountryId);
-            //    cm.Text = item.CountryName;
-            //    cmlist.Add(cm);
-            //}
-            //ViewBag.Con = cmlist;
+            foreach (var item in cddl)
+            {
+                SelectListItem cm = new SelectListItem();
+                cm.Value = Convert.ToString(item.countryId);
+                cm.Text = item.countryName;
+                cmlist.Add(cm);
+            }
+            ViewBag.Con = cmlist;
             return View();
         }
         public JsonResult GetStateById(int CountryId)
         {
             HttpClient client = new HttpClient();
             List<RepoWithState> states = new List<RepoWithState>();
-            var statedata = _data.RepoWithStates.Where(x => x.CountryId == CountryId).ToList();            
-            if (statedata != null)
+            // var statedata = _data.RepoWithStates.Where(x => x.CountryId == CountryId).ToList();
+            List<SelectListItem> cmlist = new List<SelectListItem>();
+            client.BaseAddress = new Uri(baseapi + "CountryStoreproce");
+            //  https://localhost:7063/api/CountryStoreproce/getstatebycountry/1?countryid=1
+            //"Person/productId?personid=" + id
+            //https://localhost:7063/api/Person/1?personid=1
+            var response = client.GetAsync("CountryStoreproce/getstatebycountry/Country?countryid=" + CountryId);
+            response.Wait();
+            var text = response.Result;
+            var display = text.Content.ReadAsStringAsync().Result;
+            List<Stateddl> Stateddl = JsonConvert.DeserializeObject<List<Stateddl>>(display);
+            cmlist.Add(new SelectListItem { Text = "-Select-State-", Value = "" });
+
+            if (Stateddl != null)
             {
-                foreach (var state in statedata)
+                foreach (var state in Stateddl)
                 {
                     RepoWithState stat = new RepoWithState();
-                    stat.StateName = state.StateName;
-                    stat.StateId = state.StateId;
-
-                    stat.CountryId = Convert.ToInt32(state.CountryId);
+                    stat.StateName = state.stateName;
+                    stat.StateId = state.stateId;
                     states.Add(stat);
 
                 }
@@ -96,16 +107,24 @@ namespace TaskbySaurabhSirUI.Controllers
         {
             HttpClient client = new HttpClient();
             List<RepoWithCity> city = new List<RepoWithCity>();
-           
-            var CityList = _data.RepoWithCities.Where(x => x.StateId == stateid).ToList();
-            if (CityList != null)
+
+            //  var CityList = _data.RepoWithCities.Where(x => x.StateId == stateid).ToList();
+            //https://localhost:7063/api/CountryStoreproce/1?Cityid=1
+            List<SelectListItem> cmlist = new List<SelectListItem>();
+            client.BaseAddress = new Uri(baseapi + "CountryStoreproce");
+            var response = client.GetAsync("CountryStoreproce/stateid/?Cityid=" + stateid);
+            response.Wait();
+            var text = response.Result;
+            var display = text.Content.ReadAsStringAsync().Result;
+            List<Cityddl> citylist = JsonConvert.DeserializeObject<List<Cityddl>>(display);
+            cmlist.Add(new SelectListItem { Text = "-Select-City-", Value = "" });
+            if (citylist != null)
             {
-                foreach (var cityda in CityList)
+                foreach (var cityda in citylist)
                 {
                     RepoWithCity citydat = new RepoWithCity();
-                    citydat.CityName = cityda.CityName;
-                    citydat.CityId = cityda.CityId;
-                    citydat.StateId = cityda.StateId;
+                    citydat.CityName = cityda.cityName;
+                    citydat.CityId = cityda.cityId;
                     city.Add(citydat);
                 }
 
@@ -119,12 +138,7 @@ namespace TaskbySaurabhSirUI.Controllers
         {
             HttpClient client = new HttpClient();
             var files = HttpContext.Request.Form.Files;
-
-            
-
-
-            foreach (var Image 
-                in files)
+            foreach (var Image in files)
             {
                 if (Image != null && Image.Length > 0)
                 {
@@ -134,12 +148,11 @@ namespace TaskbySaurabhSirUI.Controllers
                         Image.CopyTo(stream);
                         bytes = stream.ToArray();
                     }
-                    
+
 
                     String base64file = Convert.ToBase64String(bytes);
                     pr.FileName = files[0].FileName;
-                    pr.base64data = base64file;                  
-
+                    pr.base64data = base64file;
 
                 }
             }
@@ -147,11 +160,11 @@ namespace TaskbySaurabhSirUI.Controllers
             //var accesstoken = HttpContext.Session.GetString("accesstoken");
             client.BaseAddress = new Uri(baseapi + "Person");
             var response = client.PostAsJsonAsync<Person>("Person", pr);
-           
+
             response.Wait();
             var text = response.Result;
             return RedirectToAction("GetPerson");
-           // return View();
+            // return View();
         }
         [HttpGet]
         public IActionResult GetPerson()
@@ -173,13 +186,14 @@ namespace TaskbySaurabhSirUI.Controllers
                     request.Content = new StringContent("{...}", Encoding.UTF8, "application/json");
                     var response = client.GetAsync("Person");
                     //  var response = await _client.SendAsync(request, CancellationToken.None);
-                    List<Person> personlist = new List<Person>();
+                    List<GetPerson> personlist = new List<GetPerson>();
 
                     response.Wait();
                     var text = response.Result;
+
                     if (text.IsSuccessStatusCode)
                     {
-                        var display = text.Content.ReadAsAsync<List<Person>>();
+                        var display = text.Content.ReadAsAsync<List<GetPerson>>();
                         display.Wait();
                         personlist = display.Result;
                     }
@@ -187,6 +201,7 @@ namespace TaskbySaurabhSirUI.Controllers
                     {
                         return RedirectToAction("Index", "Account");
                     }
+
 
                     return View(personlist);
                 }
@@ -217,7 +232,7 @@ namespace TaskbySaurabhSirUI.Controllers
                     }
                     ViewBag.Con = cmlist;
 
-                    Person person = null;
+                    GetPerson person = null;
                     client.BaseAddress = new Uri(baseapi + "Person");
                     var response = client.GetAsync("Person/productId?personid=" + id);
 
@@ -225,7 +240,7 @@ namespace TaskbySaurabhSirUI.Controllers
                     var text = response.Result;
                     if (text.IsSuccessStatusCode)
                     {
-                        var display = text.Content.ReadAsAsync<Person>();
+                        var display = text.Content.ReadAsAsync<GetPerson>();
 
                         display.Wait();
                         person = display.Result;
@@ -241,7 +256,7 @@ namespace TaskbySaurabhSirUI.Controllers
 
         }
         [HttpPost]
-        public IActionResult Editperson(Person Person)
+        public IActionResult Editperson(GetPerson Person)
         {
             using (var client = new HttpClient())
             {
@@ -276,14 +291,14 @@ namespace TaskbySaurabhSirUI.Controllers
 
                     //TblEmployee emp = null;
                     client.BaseAddress = new Uri(baseapi + "Person");
-                    var response = client.PutAsJsonAsync<Person>("Person", Person);
+                    var response = client.PutAsJsonAsync<GetPerson>("Person", Person);
                     response.Wait();
                     var text = response.Result;
                     if (!text.IsSuccessStatusCode)
                     {
-                        return RedirectToAction("GetPerson", "Home");
+                        return RedirectToAction("Editperson", "Home");
                     }
-                    return RedirectToAction("Editperson");
+                    return RedirectToAction("GetPerson");
                 }
                 catch (Exception ex)
                 {
@@ -301,14 +316,14 @@ namespace TaskbySaurabhSirUI.Controllers
                 try
                 {
 
-                    Person person = null;
+                    GetPerson person = null;
                     client.BaseAddress = new Uri(baseapi + "Person");
                     var response = client.GetAsync("Person/personId?personid=" + id.ToString());
                     response.Wait();
                     var text = response.Result;
                     if (text.IsSuccessStatusCode)
                     {
-                        var display = text.Content.ReadAsAsync<Person>();
+                        var display = text.Content.ReadAsAsync<GetPerson>();
 
                         display.Wait();
                         person = display.Result;
@@ -334,7 +349,7 @@ namespace TaskbySaurabhSirUI.Controllers
                     //TblEmployee emp = null;
                     client.BaseAddress = new Uri(baseapi + "Person");
                     var response = client.DeleteAsync("Person/?personid=" + id.ToString());
-                                            //https://localhost:7063/api/Person?personid=3
+                    //https://localhost:7063/api/Person?personid=3
                     response.Wait();
                     var text = response.Result;
                     //if (!text.IsSuccessStatusCode)
@@ -357,7 +372,7 @@ namespace TaskbySaurabhSirUI.Controllers
                 try
                 {
 
-                    Person person = null;
+                    GetPerson person = null;
                     client.BaseAddress = new Uri(baseapi + "Person");
                     var response = client.GetAsync("Person/productId?personid=" + id);
 
@@ -365,7 +380,7 @@ namespace TaskbySaurabhSirUI.Controllers
                     var text = response.Result;
                     if (text.IsSuccessStatusCode)
                     {
-                        var display = text.Content.ReadAsAsync<Person>();
+                        var display = text.Content.ReadAsAsync<GetPerson>();
 
                         display.Wait();
                         person = display.Result;
@@ -382,6 +397,22 @@ namespace TaskbySaurabhSirUI.Controllers
         }
 
 
+    }
+    public class Cityddl
+    {
+        public int cityId { get; set; }
+        public string cityName { get; set; }
+    }
+    public class Stateddl
+    {
+        public int stateId { get; set; }
+        public string stateName { get; set; }
+    }
+
+    public class Countryddl
+    {
+        public int countryId { get; set; }
+        public string countryName { get; set; }
     }
 }
 //  https://localhost:7063/api/Person/9?personid=9

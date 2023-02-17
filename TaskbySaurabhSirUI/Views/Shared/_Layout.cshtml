@@ -31,16 +31,24 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Register</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="CreatePerson">Create Person</a>
-                        </li>
-                          <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="GetPerson">Get Person List</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="logout">Log Out</a>
-                        </li>
-                       @* <div style="width:auto; background-color:aqua">                           
+                        @{
+                            var t = Context.Session.GetString("accesstoken");
+                        }
+                        @if (!string.IsNullOrEmpty(t)){
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="CreatePerson">Create Person</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="GetPerson">Get Person List</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="logout">Log Out</a>
+                            </li>
+
+                        }
+                        
+                        @* <div style="width:auto; background-color:aqua">                           
                                 <strong>@Html.Encode(User.Identity.Name)</strong>
                                 @Html.ActionLink("Log Out", "Logout", "User")
                         

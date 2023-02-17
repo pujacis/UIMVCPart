@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TaskbySaurabhSirUI.Models.Person>
+﻿@model IEnumerable<TaskbySaurabhSirUI.Models.GetPerson>
 
 @{
     ViewData["Title"] = "GetPerson";
@@ -61,13 +61,14 @@
                 @Html.DisplayFor(modelItem => item.Email)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CountryId)
+
+                @Html.DisplayFor(modelItem => item.CountryName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.StateId)
+                @Html.DisplayFor(modelItem => item.SatateName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CityId)
+                @Html.DisplayFor(modelItem => item.CityName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Address)
